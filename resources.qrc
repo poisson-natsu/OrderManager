@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/main.qml</file>
+        <file>qml/NavigationBar.qml</file>
+        <file>images/export.png</file>
+        <file>images/import.png</file>
+        <file>qml/ContentView.qml</file>
+        <file>images/checked.png</file>
+        <file>images/unchecked.png</file>
+    </qresource>
+</RCC>
