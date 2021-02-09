@@ -5,7 +5,19 @@
         <file>images/export.png</file>
         <file>images/import.png</file>
         <file>qml/ContentView.qml</file>
+        <file>qml/QRCode.qml</file>
+        <file>qml/qqr.js</file>
+        <file>qml/InfoView.qml</file>
+        <file>images/qrcode.png</file>
         <file>images/checked.png</file>
         <file>images/unchecked.png</file>
+        <file>images/arrow.png</file>
+        <file>images/bill_background.png</file>
+        <file>images/tip.png</file>
+        <file>images/clear.png</file>
+        <file>qml/MessageBox.qml</file>
+        <file>images/error.png</file>
+        <file>images/true.png</file>
+        <file>images/remind.png</file>
     </qresource>
 </RCC>

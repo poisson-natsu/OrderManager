@@ -24,24 +24,27 @@ int main(int argc, char *argv[])
     const int versionMajor = 1;
     const int versionMinor = 0;
     qmlRegisterType<Excel>(uri, versionMajor, versionMinor, "Excel");
-    qmlRegisterType<ImageUtil>(uri, versionMajor, versionMinor, "ImageUtil");
+//    qmlRegisterType<ImageUtil>(uri, versionMajor, versionMinor, "ImageUtil");
 
-//    QQmlApplicationEngine engine(QUrl("qrc:/qml/main.qml"));
-//    QObject* topLevel = engine.rootObjects().value(0);
-//    QQuickWindow* window = qobject_cast<QQuickWindow*>(topLevel);
-//    if (!window) {
-//        qWarning("Error: Your root item has to be a Window.");
-//        return -1;
-//    }
+    QQmlApplicationEngine engine(QUrl("qrc:/qml/main.qml"));
+    QObject* topLevel = engine.rootObjects().value(0);
+    QQuickWindow* window = qobject_cast<QQuickWindow*>(topLevel);
+    if (!window) {
+        qWarning("Error: Your root item has to be a Window.");
+        return -1;
+    }
 
-    QQmlApplicationEngine engine;
-    const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
-    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
-                     &app, [url](QObject *obj, const QUrl &objUrl) {
-        if (!obj && url == objUrl)
-            QCoreApplication::exit(-1);
-    }, Qt::QueuedConnection);
-    engine.load(url);
+//    QQmlApplicationEngine engine;
+//    const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
+//    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
+//                     &app, [url](QObject *obj, const QUrl &objUrl) {
+//        if (!obj && url == objUrl)
+//            QCoreApplication::exit(-1);
+//    }, Qt::QueuedConnection);
+//    engine.load(url);
+
+    window->setScreen(app.primaryScreen());
+    window->show();
 
     return app.exec();
 }

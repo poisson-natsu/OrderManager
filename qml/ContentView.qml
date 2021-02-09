@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4
+import QtQuick.Controls 2.2
 import QtQuick.Controls.Styles 1.4
 
 Rectangle {
@@ -9,12 +10,50 @@ Rectangle {
     height: parent.height
 
     property bool isAllChecked: false
+    property var importData: [
+        {"checked":false,"fromCity":"Qingdao","fromName":"西西", "toCity":"Shanghai","toName":"哈哈","goodsName":"西瓜"},
+        {"checked":false,"fromCity":"Qingdao1","fromName":"西西1", "toCity":"Shanghai1","toName":"哈哈1","goodsName":"西瓜1"},
+        {"checked":false,"fromCity":"Qingdao2","fromName":"西西2", "toCity":"Shanghai2","toName":"哈哈2","goodsName":"西瓜2"}
+    ]
+
+    property int selectedRows: 0
+
+    function clearData() {
+        isAllChecked = false
+        importData = []
+        table.model = importData
+        selectedRows = 0
+    }
+
+    function reloadData(dataSource) {
+        importData = dataSource
+        table.model = importData
+    }
 
     anchors {
         top: parent.top
-//        topMargin: 88
         left: parent.left
-//        leftMargin: 47
+    }
+
+    Popup {
+        id: popup
+        width: infoView.width
+        height: infoView.height
+        padding: 0
+        leftMargin: (parent.width - popup.width)/2
+        rightMargin: (parent.width - popup.width)/2
+        topMargin: (parent.height - popup.height)/2
+        bottomMargin: (parent.height - popup.height)/2
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+        property string codeValue: ""
+        InfoView {
+            id: infoView
+            codeValue: popup.codeValue
+            anchors.fill: parent
+        }
     }
 
     Item {
@@ -29,50 +68,46 @@ Rectangle {
         property color scrollBarColor: "#E5E5E5"
         property int scrollBarWidth: 7
 
-        property variant columnWidthArr: [(tableControl.width - tableLeft) /6, (tableControl.width - tableLeft) /6,(tableControl.width - tableLeft) /6,(tableControl.width - tableLeft) /6,(tableControl.width - tableLeft) /6,(tableControl.width - tableLeft) /6]
-        property var horHeader: ["发货城市","发货人","收货城市","收货人","货物名称","二维码"]
         property int selected: -1
-        property var datas: [{
-                "checked": false,
-                "fromCity": "from",
-                "fromName": "张三",
-                "toCity": "to",
-                "toName": "里斯",
-                "goodsName": "金子",
-                "qrcode": "fff"
-            },{
-                "checked": false,
-                "fromCity": "from",
-                "fromName": "张三",
-                "toCity": "to",
-                "toName": "里斯",
-                "goodsName": "金子",
-                "qrcode": "fff"
-            }]
 
         TableView {
             id: table
+            selectionMode: SelectionMode.NoSelection
 
             onClicked: {
-                print("clicked row " + row)
+                var beforeChecked = tableView.importData[row].checked
+                tableView.importData[row].checked = !beforeChecked
+                if(beforeChecked) {
+                    selectedRows --
+                }else {
+                    selectedRows ++
+                }
+
+                isAllChecked = tableView.importData.every(function (item, index, array) {
+                    return item.checked === true
+                })
+                table.model = tableView.importData
             }
 
             anchors {
                 fill: parent
-//                topMargin: control.rowHeight
-//                leftMargin: control.tableLeft
             }
+            // 去掉边框
             frameVisible: false
 
             TableViewColumn {
+                id: checkColumn
               role: "checked"
               title: "全选"
               width: 100
 
               delegate: Rectangle {
                   width: parent.width
-                  CheckBox {
-                    anchors.verticalCenter: parent.verticalCenter
+                  Image {
+                      width: 24
+                      height: 24
+                      anchors.centerIn: parent
+                      source: styleData.value ? "../images/checked.png" : "../images/unchecked.png"
                   }
               }
             }
@@ -106,22 +141,42 @@ Rectangle {
                 role: "qrcode"
                 title: "二维码"
                 width: 100
+                delegate: Rectangle {
+                    color: "transparent"
+                    Image {
+                        width: 24
+                        height: 24
+                        anchors.centerIn: parent
+                        source: "../images/qrcode.png"
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            var oneRow = tableView.importData[styleData.row]
+                            popup.codeValue = oneRow.fromCity+"_"+oneRow.fromName+"_"+oneRow.toCity+"_"+oneRow.toName+"_"+oneRow.goodsName
+                            popup.open()
+                        }
+                    }
+                }
             }
             clip: true
-            model: tableControl.datas
+            model: tableView.importData
 
             headerDelegate: Rectangle {
                 height: tableControl.headerHeight
                 color: "#EFEFEF"
                 Text {
                     id: headText
-                    text: styleData.value
+                    text: styleData.value ? styleData.value : ""
                     anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
                 }
 
-                CheckBox {
+                Image {
                     id: allCheckBox
-                    checked: isAllChecked
+                    width: 24
+                    height: 24
+                    source: isAllChecked ? "../images/checked.png" : "../images/unchecked.png"
                     anchors {
                         verticalCenter: parent.verticalCenter
                         left: headText.right
@@ -133,11 +188,36 @@ Rectangle {
                     anchors.fill: parent
                     hoverEnabled: true
                     onEntered: {
-                        if (styleData.column > 0) {
+                        if (styleData.column !== 0) {
                             return
                         }
                         isAllChecked = !isAllChecked
+                        for(var i = 0; i < tableView.importData.length; i++) {
+                            tableView.importData[i].checked = isAllChecked
+                        }
+                        if(isAllChecked) {
+                            selectedRows = tableView.importData.length
+                        }else {
+                            selectedRows = 0
+                        }
+
+                        table.model = tableView.importData
                     }
+                }
+            }
+            rowDelegate: Rectangle {
+                height: tableControl.rowHeight
+            }
+            itemDelegate: Rectangle {
+                Text {
+                    text: {
+                        if(typeof styleData.value === "string") {
+                            return styleData.value
+                        }else {
+                            return ""
+                        }
+                    }
+                    anchors.centerIn: parent
                 }
             }
         }
