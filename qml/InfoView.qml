@@ -1,8 +1,5 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.3
-//import QtQuick.Controls 1.4
-//import QtQuick.Controls 2.2
-//import QtQuick.Controls.Styles 1.4
 
 Item {
     width: 750/2
@@ -72,7 +69,7 @@ Item {
                             text: "北京市"
                             color: "white"
                             font.bold: true
-                            font.pointSize: 16
+                            font.pixelSize: 16
                             horizontalAlignment: Text.AlignHCenter
                         }
                         Text {
@@ -83,7 +80,7 @@ Item {
                             }
                             text: "发货人：张三丰"
                             color: "white"
-                            font.pointSize: 14
+                            font.pixelSize: 14
                             horizontalAlignment: Text.AlignHCenter
                         }
                     }
@@ -113,7 +110,7 @@ Item {
                             text: "北京市"
                             color: "white"
                             font.bold: true
-                            font.pointSize: 16
+                            font.pixelSize: 16
                             horizontalAlignment: Text.AlignHCenter
                         }
                         Text {
@@ -124,7 +121,7 @@ Item {
                             }
                             text: "收货人：孙国礼"
                             color: "white"
-                            font.pointSize: 14
+                            font.pixelSize: 14
                             horizontalAlignment: Text.AlignHCenter
                         }
 
@@ -143,7 +140,7 @@ Item {
             }
             Text {
                 id: goodsName
-                text: "冰箱"
+                text: codeValue
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter

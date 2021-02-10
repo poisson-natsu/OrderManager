@@ -13,9 +13,10 @@ ApplicationWindow {
     height: 680
     title: qsTr("Hello World")
 
-    property int numToConverty: 0
     property int numConvertied: 0
     property int numError: 0
+
+    property var items: []
 
     property var codeValues: []
 
@@ -55,7 +56,15 @@ ApplicationWindow {
                       iconSource: "../images/export.png"
                       tooltip: "导出"
                       onClicked: {
-                          folderDialog.open()
+                          if(contentView.selectedRows === 0) {
+                              message.text = "请选择要保存的数据"
+                              message.type = "info"
+                              message.show = true
+                              message.openTimer()
+                          }else {
+                              folderDialog.open()
+                          }
+
                       }
                   }
                   Item { Layout.rightMargin: 5 }
@@ -65,6 +74,39 @@ ApplicationWindow {
         anchors.fill: parent
         ContentView {
             id: contentView
+        }
+    }
+
+    Image {
+        id: loadingView
+        source: "../images/loading.png"
+        anchors.centerIn: parent
+        visible: false
+        property bool finished: true
+        function startRunning() {
+            animatorController.running = true
+            loadingView.visible = true
+            finished = false
+        }
+        function stopRunning() {
+            animatorController.running = false
+            loadingView.visible = false
+            finished = true
+        }
+
+        RotationAnimator {
+            id: animatorController
+            target: loadingView;
+            from: 0;
+            to: 360;
+            duration: 1000
+            running: false
+
+            onRunningChanged: {
+                if(!loadingView.finished) {
+                    running = true
+                }
+            }
         }
     }
 
@@ -85,8 +127,24 @@ ApplicationWindow {
     }
 
     Timer {
-        id: delayTimer
+        id: obtainImageTimer
         interval: 500
+        running: false
+        repeat: true
+        onTriggered: {
+            if(numConvertied + numError >= items.length) {
+                obtainImageTimer.running = false
+                numConvertied = 0
+                numError = 0
+                return
+            }
+            obtainImage(items[numConvertied+numError])
+        }
+    }
+
+    Timer {
+        id: delayTimer
+        interval: 100
         running: false
         repeat: false
         onTriggered: {
@@ -97,48 +155,43 @@ ApplicationWindow {
                 return oneRow.fromCity+"_"+oneRow.fromName+"_"+oneRow.toCity+"_"+oneRow.toName+"_"+oneRow.goodsName
             })
 
-            var savePath = folderDialog.folder.toString().replace("file://", "")
-            for(var i = 0; i < codeValues.length; i++) {
-                numToConverty ++
-              var imgItem = Qt.createQmlObject('import QtQuick 2.0; InfoView {visible: false; codeValue: \"'+codeValues[i]+'\" }', mainWindow)
-              imgItem.grabToImage(function (result){
-                  var name = new Date().toLocaleString(Qt.locale(), "yyyyMMddHHmmsszzz")
-                  if(result.saveToFile(savePath+"/"+name+".png")) {
-                      numConvertied ++
-                  }else {
-                      numError ++
-                  }
-
-//                  console.log("ed:"+numConvertied+" selected:"+contentView.selectedRows)
-                  if(numConvertied === contentView.selectedRows) {
-//                      $message({
-//                               "message": "保存成功",
-//                                   "type":"success",
-//                                   "show":true
-//                               })
-                      numToConverty = 0
-                      numConvertied = 0
-                      numError = 0
-                      message.text = "保存成功"
-                      message.type = "success"
-                      message.show = true
-                      message.openTimer()
-
-                      console.log("--------------------")
-                  }
-                  if(numError + numConvertied === contentView.selectedRows) {
-                        message.text = "保存完成，失败："+ errorNum
-                        message.type = "info"
-                      message.show = true
-                        message.openTimer()
-                        numToConverty = 0
-                        numConvertied = 0
-                      numError = 0
-                        console.log("----------=====----------")
-                  }
-              })
+            for(var n = 0; n < codeValues.length; n++) {
+                var imgItem = Qt.createQmlObject('import QtQuick 2.0; InfoView {visible: false; codeValue: \"'+codeValues[n]+'\" }', mainWindow)
+                items.push(imgItem)
             }
+            obtainImageTimer.running = true
+
         }
+    }
+    function obtainImage(obj) {
+        var savePath = folderDialog.folder.toString().replace("file://", "")
+        obj.grabToImage(function (result){
+            var name = new Date().toLocaleString(Qt.locale(), "yyyyMMddHHmmsszzz")
+            if(result.saveToFile(savePath+"/"+name+".png")) {
+                numConvertied ++
+            }else {
+                numError ++
+            }
+
+            console.log("ed:"+numConvertied+" selected:"+contentView.selectedRows)
+            if(numConvertied === contentView.selectedRows) {
+                loadingView.stopRunning()
+                message.text = "保存成功"
+                message.type = "success"
+                message.show = true
+                message.openTimer()
+
+                console.log("--------------------")
+            }
+            if(numError + numConvertied === contentView.selectedRows) {
+                loadingView.stopRunning()
+                  message.text = "保存完成，失败："+ errorNum
+                  message.type = "info"
+                message.show = true
+                  message.openTimer()
+                  console.log("----------=====----------")
+            }
+        })
     }
 
     MessageBox {
@@ -150,7 +203,9 @@ ApplicationWindow {
         id: folderDialog
         folder: Folder.StandardPaths.writableLocation(Folder.StandardPaths.DocumentsLocation)
         onAccepted: {
+            items = []
             delayTimer.running = true
+            loadingView.startRunning()
         }
     }
 

@@ -19,5 +19,6 @@
         <file>images/error.png</file>
         <file>images/true.png</file>
         <file>images/remind.png</file>
+        <file>images/loading.png</file>
     </qresource>
 </RCC>

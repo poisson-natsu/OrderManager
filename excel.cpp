@@ -23,8 +23,13 @@ void Excel::importExcel(const QString &xlsName)
 {
     QVariantList ret;
     QString name = xlsName;
+#ifdef Q_OS_WIN
+    name = name.remove("file:///");
+#else
     name = name.remove("file://");
+#endif
     QFile file(name);
+    qDebug() << "name:" << name;
     if (!file.exists()) {
         qDebug() << "文件不存在？？？";
         return;
@@ -39,7 +44,7 @@ void Excel::importExcel(const QString &xlsName)
         Worksheet *sheet = dynamic_cast<Worksheet *>(xlsx.sheet(sheetName));
         if (sheet) {
             int row = 2;
-            while (sheet->cellAt(row, 1)) {
+            while (sheet->cellAt(row, 1) && sheet->cellAt(row, 1)->value().isValid()) {
                 QVariantMap map;
                 for(int c = 0; c < m_tags.size(); c++) {
                     map.insert(m_tags[c], sheet->cellAt(row, c+1)->value());

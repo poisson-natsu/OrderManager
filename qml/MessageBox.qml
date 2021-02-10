@@ -12,7 +12,7 @@ Item {
     property bool show: false
     property var type: "info"
     visible: show
-    //执行定时器
+    //
     function openTimer() {
         timerId.start()
 //        opacity = 0
