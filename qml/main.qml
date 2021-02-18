@@ -39,6 +39,7 @@ ApplicationWindow {
                       iconName: "clear"
                       iconSource: "../images/clear.png"
                       tooltip: "清除"
+                      enabled: !gifLoadingView.visible
                       onClicked: {
                           contentView.clearData()
                       }
@@ -47,6 +48,7 @@ ApplicationWindow {
                       iconName: "import"
                       iconSource: "../images/import.png"
                       tooltip: "导入"
+                      enabled: !gifLoadingView.visible
                       onClicked: {
                         fileDialog.open()
                       }
@@ -55,6 +57,7 @@ ApplicationWindow {
                       iconName: "export"
                       iconSource: "../images/export.png"
                       tooltip: "导出"
+                      enabled: !gifLoadingView.visible
                       onClicked: {
                           if(contentView.selectedRows === 0) {
                               message.text = "请选择要保存的数据"
@@ -70,45 +73,53 @@ ApplicationWindow {
                   Item { Layout.rightMargin: 5 }
               }
           }
-    RowLayout {
-        anchors.fill: parent
-        ContentView {
-            id: contentView
-        }
+
+    ContentView {
+        id: contentView
+        enabled: !gifLoadingView.visible
     }
 
-    Image {
-        id: loadingView
-        source: "../images/loading.png"
+    AnimatedImage {
+        id: gifLoadingView
+        source: "../images/loading.gif"
         anchors.centerIn: parent
+        z: 100
         visible: false
-        property bool finished: true
-        function startRunning() {
-            animatorController.running = true
-            loadingView.visible = true
-            finished = false
-        }
-        function stopRunning() {
-            animatorController.running = false
-            loadingView.visible = false
-            finished = true
-        }
-
-        RotationAnimator {
-            id: animatorController
-            target: loadingView;
-            from: 0;
-            to: 360;
-            duration: 1000
-            running: false
-
-            onRunningChanged: {
-                if(!loadingView.finished) {
-                    running = true
-                }
-            }
-        }
     }
+
+//    Image {
+//        id: loadingView
+//        source: "../images/loading.png"
+//        anchors.centerIn: parent
+//        visible: false
+//        z: 100
+//        property bool finished: true
+//        function startRunning() {
+//            animatorController.running = true
+//            loadingView.visible = true
+//            finished = false
+//        }
+//        function stopRunning() {
+//            animatorController.running = false
+//            loadingView.visible = false
+//            finished = true
+//        }
+
+//        RotationAnimator {
+//            id: animatorController
+//            target: loadingView;
+//            from: 0;
+//            to: 360;
+//            duration: 1000
+//            running: false
+
+//            onRunningChanged: {
+//                if(!loadingView.finished) {
+//                    running = true
+//                }
+//            }
+//        }
+//    }
 
     FileDialog {
         id: fileDialog
@@ -175,7 +186,8 @@ ApplicationWindow {
 
             console.log("ed:"+numConvertied+" selected:"+contentView.selectedRows)
             if(numConvertied === contentView.selectedRows) {
-                loadingView.stopRunning()
+//                loadingView.stopRunning()
+                gifLoadingView.visible = false
                 message.text = "保存成功"
                 message.type = "success"
                 message.show = true
@@ -184,7 +196,7 @@ ApplicationWindow {
                 console.log("--------------------")
             }
             if(numError + numConvertied === contentView.selectedRows) {
-                loadingView.stopRunning()
+                gifLoadingView.visible = false
                   message.text = "保存完成，失败："+ errorNum
                   message.type = "info"
                 message.show = true
@@ -205,7 +217,8 @@ ApplicationWindow {
         onAccepted: {
             items = []
             delayTimer.running = true
-            loadingView.startRunning()
+//            loadingView.startRunning()
+            gifLoadingView.visible = true
         }
     }
 

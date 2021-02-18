@@ -20,5 +20,6 @@
         <file>images/true.png</file>
         <file>images/remind.png</file>
         <file>images/loading.png</file>
+        <file>images/loading.gif</file>
     </qresource>
 </RCC>

@@ -27,6 +27,15 @@ Item {
         return out;
     }
 
+    function getDataArray(index) {
+        var splitData = codeValue.split("_")
+        if (splitData.length > index) {
+            return splitData[index]
+        }else {
+            return "--"
+        }
+    }
+
     Image {
         id: billView
         anchors.fill: parent
@@ -66,7 +75,7 @@ Item {
                                 bottom: parent.verticalCenter
                             }
 
-                            text: "北京市"
+                            text: getDataArray(0)
                             color: "white"
                             font.bold: true
                             font.pixelSize: 16
@@ -78,7 +87,7 @@ Item {
                                 right: parent.right
                                 top: parent.verticalCenter
                             }
-                            text: "发货人：张三丰"
+                            text: "发货人：" + getDataArray(1)
                             color: "white"
                             font.pixelSize: 14
                             horizontalAlignment: Text.AlignHCenter
@@ -107,7 +116,7 @@ Item {
                                 bottom: parent.verticalCenter
                             }
 
-                            text: "北京市"
+                            text: getDataArray(2)
                             color: "white"
                             font.bold: true
                             font.pixelSize: 16
@@ -119,7 +128,7 @@ Item {
                                 right: parent.right
                                 top: parent.verticalCenter
                             }
-                            text: "收货人：孙国礼"
+                            text: "收货人：" + getDataArray(3)
                             color: "white"
                             font.pixelSize: 14
                             horizontalAlignment: Text.AlignHCenter
@@ -140,7 +149,7 @@ Item {
             }
             Text {
                 id: goodsName
-                text: codeValue
+                text: getDataArray(4)
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter
