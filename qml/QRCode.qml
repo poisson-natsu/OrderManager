@@ -23,6 +23,7 @@ Canvas {
             side : Math.min(canvas.width, canvas.height),
             value : canvas.value
         })
+        console.log("--------------width:" + canvas.width + "    -----height:" + canvas.height)
     }
     onHeightChanged : {
         requestPaint()

@@ -44,112 +44,23 @@ Item {
         Column {
             spacing: 20
             anchors.top: parent.top
-            anchors.topMargin: 70
+            anchors.topMargin: 100
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            Rectangle {
-                radius: 5
-                anchors.left: parent.left
-                anchors.leftMargin: 50
-                anchors.right: parent.right
-                anchors.rightMargin: 50
-                height: 60
-                gradient: Gradient {
-                    GradientStop { position: 0.0; color: "#FF4242" }
-                    GradientStop { position: 1.0; color: "#FE5196" }
-                }
-                RowLayout {
-                    anchors.fill: parent
-                    anchors.leftMargin: 10
-                    anchors.rightMargin: 10
-                    spacing: 0
-                    Rectangle {
-                        color: "transparent"
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        Text {
-                            anchors {
-                                left: parent.left
-                                right: parent.right
-                                bottom: parent.verticalCenter
-                            }
 
-                            text: getDataArray(0)
-                            color: "white"
-                            font.bold: true
-                            font.pixelSize: 16
-                            horizontalAlignment: Text.AlignHCenter
-                        }
-                        Text {
-                            anchors {
-                                left: parent.left
-                                right: parent.right
-                                top: parent.verticalCenter
-                            }
-                            text: "发货人：" + getDataArray(1)
-                            color: "white"
-                            font.pixelSize: 14
-                            horizontalAlignment: Text.AlignHCenter
-                        }
-                    }
-                    Rectangle {
-                        color: "transparent"
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        Image {
-                            width: 41
-                            height: 5
-                            anchors.centerIn: parent
-                            anchors.verticalCenterOffset: -10
-                            source: "../images/arrow.png"
-                        }
-                    }
-                    Rectangle {
-                        color: "transparent"
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        Text {
-                            anchors {
-                                left: parent.left
-                                right: parent.right
-                                bottom: parent.verticalCenter
-                            }
-
-                            text: getDataArray(2)
-                            color: "white"
-                            font.bold: true
-                            font.pixelSize: 16
-                            horizontalAlignment: Text.AlignHCenter
-                        }
-                        Text {
-                            anchors {
-                                left: parent.left
-                                right: parent.right
-                                top: parent.verticalCenter
-                            }
-                            text: "收货人：" + getDataArray(3)
-                            color: "white"
-                            font.pixelSize: 14
-                            horizontalAlignment: Text.AlignHCenter
-                        }
-
-                    }
-                }
-
-            }
             QRCode {
                 id: qrCode
-                width: 200
-                height: 200
+                width: 228
+                height: 228
                 anchors.left: parent.left
-                anchors.leftMargin: (parent.width-qrCode.width)/2+5
+                anchors.leftMargin: (parent.width-qrCode.width)/2
                 level: "Q"
                 value: toUtf8(codeValue)
             }
             Text {
                 id: goodsName
-                text: getDataArray(4)
+                text: "姓名：" + getDataArray(7) + " 车牌号：" + getDataArray(5)
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter

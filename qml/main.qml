@@ -1,6 +1,7 @@
-import QtQuick 2.9
+import QtQuick 2.7
 import QtQuick.Window 2.2
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.2
+import QtQuick.Controls 1.4 as HH
 import QtQuick.Layouts 1.3
 import QtQuick.Dialogs 1.2
 import Qt.labs.platform 1.0 as Folder
@@ -11,7 +12,7 @@ ApplicationWindow {
     visible: true
     width: 860
     height: 680
-    title: qsTr("Hello World")
+    title: qsTr("二维码管理工具")
 
     property int numConvertied: 0
     property int numError: 0
@@ -29,33 +30,36 @@ ApplicationWindow {
         }
     }
 
-    toolBar:ToolBar {
+    header: ToolBar {
+        background: Rectangle {
+            color: "#ddd"
+        }
+        height: 60
               RowLayout {
                   anchors.fill: parent
                   spacing: 10
-
                   Item { Layout.fillWidth: true }
-                  ToolButton {
+                  HH.ToolButton {
                       iconName: "clear"
-                      iconSource: "../images/clear.png"
+                      iconSource: "qrc:/images/clear.png"
                       tooltip: "清除"
                       enabled: !gifLoadingView.visible
                       onClicked: {
                           contentView.clearData()
                       }
                   }
-                  ToolButton {
+                  HH.ToolButton {
                       iconName: "import"
-                      iconSource: "../images/import.png"
+                      iconSource: "qrc:/images/import.png"
                       tooltip: "导入"
                       enabled: !gifLoadingView.visible
                       onClicked: {
                         fileDialog.open()
                       }
                   }
-                  ToolButton {
+                  HH.ToolButton {
                       iconName: "export"
-                      iconSource: "../images/export.png"
+                      iconSource: "qrc:/images/export.png"
                       tooltip: "导出"
                       enabled: !gifLoadingView.visible
                       onClicked: {
@@ -81,9 +85,9 @@ ApplicationWindow {
 
     AnimatedImage {
         id: gifLoadingView
-        source: "../images/loading.gif"
+        source: "qrc:/images/loading.gif"
         anchors.centerIn: parent
-        z: 100
+        z: 1000
         visible: false
     }
 
@@ -125,7 +129,7 @@ ApplicationWindow {
         id: fileDialog
         title: "Please choose a file"
         folder: shortcuts.documents
-        nameFilters: [ "表格文件 (*.xls *.xlsx)", "所有文件 (*)" ]
+        nameFilters: [ "表格文件 (*.xlsx)", "所有文件 (*)" ]
         Component.onCompleted: visible = false
         onAccepted: {
             console.log("You chose: " + fileDialog.fileUrl)
@@ -163,7 +167,8 @@ ApplicationWindow {
                 return element.checked
             })
             codeValues = codeValues.map(function (oneRow, index, arr) {
-                return oneRow.fromCity+"_"+oneRow.fromName+"_"+oneRow.toCity+"_"+oneRow.toName+"_"+oneRow.goodsName
+                return oneRow.businessPark+"_"+oneRow.businessType+"_"+oneRow.category+"_"+oneRow.numbers+"_"+oneRow.driverName+
+                        "_"+oneRow.truckNo+"_"+oneRow.outTime+"_"+oneRow.applicant+"_"+oneRow.outDate
             })
 
             for(var n = 0; n < codeValues.length; n++) {
@@ -175,7 +180,14 @@ ApplicationWindow {
         }
     }
     function obtainImage(obj) {
-        var savePath = folderDialog.folder.toString().replace("file://", "")
+        var savePath = folderDialog.folder.toString().replace("file:///", "")
+        if (savePath.indexOf(":") !== -1) {
+            // windows
+        }else {
+            // mac
+            savePath = "/"+savePath
+        }
+
         obj.grabToImage(function (result){
             var name = new Date().toLocaleString(Qt.locale(), "yyyyMMddHHmmsszzz")
             if(result.saveToFile(savePath+"/"+name+".png")) {

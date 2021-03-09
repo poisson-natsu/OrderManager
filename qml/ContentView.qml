@@ -10,11 +10,7 @@ Rectangle {
     height: parent.height
 
     property bool isAllChecked: false
-    property var importData: [
-        {"checked":false,"fromCity":"Qingdao","fromName":"西西", "toCity":"Shanghai","toName":"哈哈","goodsName":"西瓜"},
-        {"checked":false,"fromCity":"Qingdao1","fromName":"西西1", "toCity":"Shanghai1","toName":"哈哈1","goodsName":"西瓜1"},
-        {"checked":false,"fromCity":"Qingdao2","fromName":"西西2", "toCity":"Shanghai2","toName":"哈哈2","goodsName":"西瓜2"}
-    ]
+    property var importData: []
 
     property int selectedRows: 0
 
@@ -28,6 +24,7 @@ Rectangle {
     function reloadData(dataSource) {
         importData = dataSource
         table.model = importData
+        table.resizeColumnsToContents()
     }
 
     anchors {
@@ -112,31 +109,51 @@ Rectangle {
               }
             }
             TableViewColumn {
-              role: "fromCity"
-              title: "发货城市"
+              role: "businessPark"
+              title: "园区"
+              width: 80
+            }
+            TableViewColumn {
+              role: "businessType"
+              title: "业务类型"
+              width: 150
+            }
+            TableViewColumn {
+              role: "category"
+              title: "类别"
+              width: 80
+            }
+            TableViewColumn {
+              role: "numbers"
+              title: "数量"
+              width: 50
+            }
+            TableViewColumn {
+              role: "driverName"
+              title: "司机姓名"
+              width: 80
+            }
+            TableViewColumn {
+              role: "truckNo"
+              title: "车牌号"
+              width: 80
+            }
+            TableViewColumn {
+              role: "outTime"
+              title: "出园申请时间"
+              width: 150
+            }
+            TableViewColumn {
+              role: "applicant"
+              title: "申请人"
               width: 100
             }
+            TableViewColumn {
+              role: "outDate"
+              title: "二维码有效期（24小时）"
+              width: 160
+            }
 
-            TableViewColumn {
-                role: "fromName"
-                title: "发货人"
-                width: 100
-            }
-            TableViewColumn {
-                role: "toCity"
-                title: "收货城市"
-                width: 100
-            }
-            TableViewColumn {
-                role: "toName"
-                title: "收货人"
-                width: 100
-            }
-            TableViewColumn {
-                role: "goodsName"
-                title: "货物名称"
-                width: 100
-            }
             TableViewColumn {
                 role: "qrcode"
                 title: "二维码"
@@ -153,7 +170,9 @@ Rectangle {
                         anchors.fill: parent
                         onClicked: {
                             var oneRow = tableView.importData[styleData.row]
-                            popup.codeValue = oneRow.fromCity+"_"+oneRow.fromName+"_"+oneRow.toCity+"_"+oneRow.toName+"_"+oneRow.goodsName
+                            popup.codeValue = oneRow.businessPark+"_"+oneRow.businessType+"_"+oneRow.category+"_"+
+                                    oneRow.numbers+"_"+oneRow.driverName+"_"+oneRow.truckNo+"_"+oneRow.outTime+"_"+
+                                    oneRow.applicant+"_"+oneRow.outDate
                             popup.open()
                         }
                     }
@@ -165,6 +184,8 @@ Rectangle {
             headerDelegate: Rectangle {
                 height: tableControl.headerHeight
                 color: "#EFEFEF"
+                border.width: 1
+                border.color: "#f8f8f8"
                 Text {
                     id: headText
                     text: styleData.value ? styleData.value : ""
@@ -209,6 +230,7 @@ Rectangle {
                 height: tableControl.rowHeight
             }
             itemDelegate: Rectangle {
+                clip: true
                 Text {
                     text: {
                         if(typeof styleData.value === "string") {

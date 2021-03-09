@@ -12,11 +12,16 @@ using namespace QXlsx;
 
 Excel::Excel(QObject *parent) : QObject(parent)
 {
-    m_tags.append("fromCity");
-    m_tags.append("fromName");
-    m_tags.append("toCity");
-    m_tags.append("toName");
-    m_tags.append("goodsName");
+    m_tags.append("businessPark");
+    m_tags.append("businessType");
+    m_tags.append("category");
+    m_tags.append("numbers");
+    m_tags.append("driverName");
+
+    m_tags.append("truckNo");
+    m_tags.append("outTime");
+    m_tags.append("applicant");
+    m_tags.append("outDate");
 }
 
 void Excel::importExcel(const QString &xlsName)

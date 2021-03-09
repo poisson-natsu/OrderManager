@@ -14,7 +14,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 RC_FILE += logo.rc
-ICON = logo.icns
+#ICON = logo.icns
 #RC_ICONS = logo.ico
 
 DEFINES += HAVE_CONFIG_H
@@ -23,17 +23,13 @@ DEFINES += HAVE_CONFIG_H
 HEADERS += \
     excel.h \
     imageutil.h \
-    qrcode.h \
-    qtsingleapplication/qtlocalpeer.h \
-    qtsingleapplication/qtsingleapplication.h
+    qrcode.h
 
 SOURCES += \
         excel.cpp \
         imageutil.cpp \
         main.cpp \
-        qrcode.cpp \
-        qtsingleapplication/qtlocalpeer.cpp \
-        qtsingleapplication/qtsingleapplication.cpp
+        qrcode.cpp
 
 RESOURCES += \
     resources.qrc
